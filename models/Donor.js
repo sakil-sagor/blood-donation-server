@@ -54,6 +54,17 @@ const donorSchema = mongoose.Schema({
         enum: ["donor", "admin"],
         default: "donor",
     },
+    lastDonateDate: {
+        type: Date,
+        default: new Date("2022-11-21"),
+    },
+
+    totalDonate: {
+        type: Number,
+        default: 0,
+    },
+
+
     contactNumber: {
         type: String,
         unique: true,
