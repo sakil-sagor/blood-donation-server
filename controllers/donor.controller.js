@@ -99,6 +99,12 @@ exports.getDonor = async (req, res) => {
 }
 exports.updateDonor = async (req, res) => {
     try {
+        const userExistsByPhone = await findDonorByPhone(req.body.contactNumber);
+        if (userExistsByPhone) {
+            res.status(400)
+            throw new Error("User Phone already exists")
+        }
+
         const { email } = req.query;
         console.log(email)
         const result = await updateDonor(email, req.body)

@@ -33,7 +33,6 @@ exports.findDonorByPhone = async (contactNumber) => {
 }
 
 exports.updateDonor = async (email, data) => {
-    console.log(email, data)
     const donor = await Donor.updateOne({ email: email }, { $set: data }, { runValidators: true });
     return donor;
 }
