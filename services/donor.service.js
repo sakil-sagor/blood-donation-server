@@ -13,7 +13,6 @@ exports.getAllDonors = async (filters, queries) => {
         .sort(queries.sortBy)
     const totalDonors = await Donor.countDocuments(filters);
     const pageCount = Math.ceil(totalDonors / queries.limit)
-    console.log(totalDonors, pageCount)
     return { donors, totalDonors, pageCount };
 }
 
@@ -26,6 +25,11 @@ exports.createDonorService = async (donorInfo) => {
 exports.findDonorByEmail = async (email) => {
     const donor = await Donor.findOne({ email });
     return donor;
+}
+exports.findAdminByEmail = async (email) => {
+    const donor = await Donor.findOne({ email });
+    return donor;
+
 }
 exports.findDonorByPhone = async (contactNumber) => {
     const donor = await Donor.findOne({ contactNumber });

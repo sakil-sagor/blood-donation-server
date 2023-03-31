@@ -1,11 +1,10 @@
-const { createDonorService, findDonorByEmail, findDonorByPhone, getAllDonors, updateDonor } = require("../services/donor.service");
+const { createDonorService, findDonorByEmail, findDonorByPhone, getAllDonors, updateDonor, findAdminByEmail } = require("../services/donor.service");
 
 
 exports.getDonors = async (req, res) => {
     try {
 
         let filters = { ...req.query }
-        console.log(filters, "ager quesries")
         const excludeFields = ["limit", "sort", "page", "fields"]
         excludeFields.forEach(field => delete filters[field])
 
@@ -29,7 +28,6 @@ exports.getDonors = async (req, res) => {
             const { page = 1, limit = 3 } = req.query;
             const skip = (page - 1) * parseInt(limit);
             queries.skip = skip;
-            console.log(queries.skip)
             queries.limit = limit;
         }
 
@@ -89,6 +87,30 @@ exports.getDonor = async (req, res) => {
             status: "success",
             data: donor
         })
+    } catch (error) {
+        console.log(error);
+        res.status(400).json({
+            status: "fail",
+            error: "Couldn't get the donor",
+        });
+    }
+}
+exports.getAdmin = async (req, res) => {
+
+    try {
+        const { email } = req.params;
+        const donor = await findAdminByEmail(email);
+        if (donor.role === "admin") {
+            res.status(200).json({
+                status: "success",
+                data: donor
+            })
+        } else {
+            res.status(400).json({
+                status: "fail",
+                error: "Couldn't get the donor",
+            });
+        }
     } catch (error) {
         console.log(error);
         res.status(400).json({

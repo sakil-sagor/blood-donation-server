@@ -41,14 +41,6 @@ const donorSchema = mongoose.Schema({
         maxLength: [100, "Name is too large"],
 
     },
-    fatherName: {
-        type: String,
-        required: [true, "Please provide your father name"],
-        trim: true,
-        minLength: [3, "Name must be at least 3 characters."],
-        maxLength: [100, "Name is too large"],
-
-    },
     role: {
         type: String,
         enum: ["donor", "admin"],
