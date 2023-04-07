@@ -1,4 +1,5 @@
-const { createDonorService, findDonorByEmail, findDonorByPhone, getAllDonors, updateDonor, findAdminByEmail } = require("../services/donor.service");
+const { createDonorService, findDonorByEmail, findDonorByPhone, getAllDonors, updateDonor, findAdminByEmail, deleteDonorById } = require("../services/donor.service");
+const { generateToken } = require("../utils/token");
 
 
 exports.getDonors = async (req, res) => {
@@ -9,7 +10,6 @@ exports.getDonors = async (req, res) => {
         excludeFields.forEach(field => delete filters[field])
 
 
-
         const queries = {};
         // separate sort and make fit for data query 
         if (req.query.sort) {
@@ -18,11 +18,13 @@ exports.getDonors = async (req, res) => {
         }
 
         // load specific property and value ( fields)
+        console.log(req.query.field)
         if (req.query.fields) {
             const fields = req.query.fields.split(',').join(' ');
             queries.fields = fields;
 
         }
+        console.log(req.query.field)
         // pagination 
         if (req.query.page) {
             const { page = 1, limit = 3 } = req.query;
@@ -47,11 +49,54 @@ exports.getDonors = async (req, res) => {
         });
     }
 }
+exports.login = async (req, res) => {
+    try {
+        const { contactNumber, password } = req.body;
+
+        if (!contactNumber || !password) {
+            return res.status(401).json({
+                status: "fail",
+                error: "please provide your credentials"
+            });
+        }
+        const donor = await findDonorByPhone(contactNumber);
+        console.log(donor)
+        if (!donor) {
+            return res.status(401).json({
+                status: "fail",
+                error: "No user found, please create an account"
+            });
+        }
+        // password matching 
+        if (donor.password !== password) {
+            return res.status(403).json({
+                status: "fail",
+                error: "Invalid email or password"
+            });
+        }
+        // jwt token 
+        const token = generateToken(donor)
+        console.log(token)
+
+        const { password: pwd, ...other } = donor.toObject();
+
+        res.status(200).json({
+            status: "success",
+            message: "Successfully loged in",
+            data: { other, token }
+        })
+    } catch (error) {
+        res.status(500).json({
+            status: "fail to login",
+            error,
+        })
+    }
+}
 
 
 exports.createDonor = async (req, res) => {
     try {
-        const { email, contactNumber } = req.body;
+        const { email, contactNumber, password, confirmPassword } = req.body;
         const userExistsByEmail = await findDonorByEmail(email);
         if (userExistsByEmail) {
             res.status(400)
@@ -63,11 +108,27 @@ exports.createDonor = async (req, res) => {
             res.status(400)
             throw new Error("User Phone already exists")
         }
+        // password matching 
+        if (password !== confirmPassword) {
+            return res.status(403).json({
+                status: "fail",
+                error: "Passwords don't match!"
+            });
+
+        }
+        // jwt token 
+
+        // console.log(token)
+
+        // const { password: pwd, ...other } = donor.toObject();
+
         const donor = await createDonorService(req.body);
+        const token = generateToken(donor);
+        console.log(donor)
         res.status(200).json({
             status: "success",
             message: "Successfully signed up",
-            data: donor,
+            data: { donor, token }
 
         })
     } catch (error) {
@@ -79,10 +140,32 @@ exports.createDonor = async (req, res) => {
     }
 }
 
+exports.deleteDonor = async (req, res) => {
+    try {
+
+        const { id } = req.params;
+        console.log(id)
+        const data = await deleteDonorById(id)
+        res.status(200).json({
+            status: "success",
+            data: data,
+
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(400).json({
+            status: "fail",
+            error: "Couldn't delete the donor",
+        });
+    }
+}
+
+
 exports.getDonor = async (req, res) => {
     try {
-        const { email } = req.query;
-        const donor = await findDonorByEmail(email)
+        console.log(req.params)
+        const { contactNumber } = req.params;
+        const donor = await findDonorByPhone(contactNumber)
         res.status(200).json({
             status: "success",
             data: donor
@@ -108,26 +191,27 @@ exports.getAdmin = async (req, res) => {
         } else {
             res.status(400).json({
                 status: "fail",
-                error: "Couldn't get the donor",
+                error: "Couldn't get  admin",
             });
         }
     } catch (error) {
         console.log(error);
         res.status(400).json({
             status: "fail",
-            error: "Couldn't get the donor",
+            error: "Couldn't get the admin",
         });
     }
 }
 exports.updateDonor = async (req, res) => {
     try {
+        console.log(req.body)
         const userExistsByPhone = await findDonorByPhone(req.body.contactNumber);
         if (userExistsByPhone) {
             res.status(400)
             throw new Error("User Phone already exists")
         }
 
-        const { email } = req.query;
+        const { email } = req.params;
         console.log(email)
         const result = await updateDonor(email, req.body)
         res.status(200).json({

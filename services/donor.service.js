@@ -5,11 +5,11 @@ const Donor = require("../models/Donor")
 
 exports.getAllDonors = async (filters, queries) => {
     // serial--> select, sort, 
-
     const donors = await Donor
         .find(filters)
         .skip(queries.skip)
         .limit(queries.limit)
+        .select(queries.fields)
         .sort(queries.sortBy)
     const totalDonors = await Donor.countDocuments(filters);
     const pageCount = Math.ceil(totalDonors / queries.limit)
@@ -21,6 +21,10 @@ exports.createDonorService = async (donorInfo) => {
     return donor;
 }
 
+exports.deleteDonorById = async (id) => {
+    const data = await Donor.deleteOne({ _id: id });
+    return data;
+}
 
 exports.findDonorByEmail = async (email) => {
     const donor = await Donor.findOne({ email });

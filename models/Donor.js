@@ -15,23 +15,6 @@ const donorSchema = mongoose.Schema({
         type: String,
         required: [true, "Password is required"],
         minLength: 6,
-        // validate: {
-        //     validator: (value) =>
-        //         validator.isStrongPassword(value, {
-        //             minLength: 6,
-        //             minUppercase: 1,
-        //         }),
-        //     message: "Password {VALUE} is not strong enough.",
-        // },
-    }, confirmPassword: {
-        type: String,
-        required: [true, "Please confirm your password"],
-        validate: {
-            validator: function (value) {
-                return value === this.password;
-            },
-            message: "Passwords don't match!",
-        },
     },
     name: {
         type: String,
@@ -45,6 +28,16 @@ const donorSchema = mongoose.Schema({
         type: String,
         enum: ["donor", "admin"],
         default: "donor",
+    },
+    status: {
+        type: String,
+        enum: ["active", "deactive"],
+        default: "active",
+    },
+    donationStatus: {
+        type: String,
+        enum: ["active", "deactive"],
+        default: "active",
     },
     lastDonateDate: {
         type: Date,
@@ -64,11 +57,6 @@ const donorSchema = mongoose.Schema({
         minLength: 11,
         maxLength: 11,
         required: true,
-    },
-    nidNumber: {
-        type: Number,
-        minLength: 10,
-        default: "0123456789",
     },
     bloodGroup: {
         type: String,
