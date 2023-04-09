@@ -10,7 +10,6 @@ const Donor = require("../models/Donor");
 
 module.exports = async (req, res, next) => {
     try {
-        const { contactNumber } = req?.params;
         const token = req.headers?.authorization?.split(" ")?.[1];
         if (!token) {
             return res.status(401).json({
@@ -18,19 +17,14 @@ module.exports = async (req, res, next) => {
                 error: "You are not logged in"
             });
         }
-
         // jwt ekti cl back func return kore tai node er ekti core module pormisify use kore etake pormise kora hoy 
         const decoded = await promisify(jwt.verify)(token, process.env.TOKEN_SECRET);
-
-        // const user = Donor.findOne({ email: decoded.email })
-
-        if (decoded.contactNumber !== contactNumber) {
+        if (decoded.role !== "admin") {
             return res.status(401).json({
                 status: "fail",
-                error: "You are not logged"
+                error: "You are a thief, Fuck you!"
             });
         }
-
         req.user = decoded;
         next();
 

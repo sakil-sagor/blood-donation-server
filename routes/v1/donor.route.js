@@ -2,6 +2,8 @@ const express = require('express');
 const donorContro = require('../../controllers/donor.controller');
 const searchCount = require('../../middleware/searchCount');
 const verifyToken = require('../../middleware/verifyToken');
+const verifyAdmin = require('../../middleware/verifyAdmin');
+const verifyAdminRole = require('../../middleware/verifyAdminRole');
 const router = express.Router();
 
 
@@ -13,20 +15,20 @@ router.route('/registration')
 router.route('/login')
     .post(donorContro.login)
 
-router.route('/me/admin/:email')
-    .get(donorContro.getAdmin)
+router.route('/me/admin/:contactNumber')
+    .get(verifyAdmin, donorContro.getAdmin)
 
-router.route("/me/autoUpdate/:email")
+router.route("/me/autoUpdate/:contactNumber")
     .patch(donorContro.updateDonor)
 
 
 router.route("/me/:contactNumber")
-    .get(donorContro.getDonor)
-    .patch(donorContro.updateDonor)
+    .get(verifyToken, donorContro.getDonor)
+    .patch(verifyToken, donorContro.updateDonor)
 
 
 router.route("/:id")
-    .delete(donorContro.deleteDonor)
+    .delete(verifyAdminRole, donorContro.deleteDonor)
 
 
 module.exports = router;

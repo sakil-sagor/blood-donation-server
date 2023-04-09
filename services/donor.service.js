@@ -26,12 +26,12 @@ exports.deleteDonorById = async (id) => {
     return data;
 }
 
-exports.findDonorByEmail = async (email) => {
-    const donor = await Donor.findOne({ email });
-    return donor;
-}
-exports.findAdminByEmail = async (email) => {
-    const donor = await Donor.findOne({ email });
+// exports.findDonorByEmail = async (email) => {
+//     const donor = await Donor.findOne({ email });
+//     return donor;
+// }
+exports.findAdminByPhone = async (contactNumber) => {
+    const donor = await Donor.findOne({ contactNumber });
     return donor;
 
 }
@@ -40,8 +40,8 @@ exports.findDonorByPhone = async (contactNumber) => {
     return donor;
 }
 
-exports.updateDonor = async (email, data) => {
-    const donor = await Donor.updateOne({ email: email }, { $set: data }, { runValidators: true });
+exports.updateDonor = async (contactNumber, data) => {
+    const donor = await Donor.updateOne({ contactNumber: contactNumber }, { $set: data }, { runValidators: true });
     return donor;
 }
 

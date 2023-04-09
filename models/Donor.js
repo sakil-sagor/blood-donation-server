@@ -3,19 +3,6 @@ const validator = require('validator');
 
 
 const donorSchema = mongoose.Schema({
-    email: {
-        type: String,
-        validate: [validator.isEmail, "Please provide a valid email"],
-        trim: true,
-        lowercase: true,
-        unique: true,
-        required: [true, "Email is required"]
-    },
-    password: {
-        type: String,
-        required: [true, "Password is required"],
-        minLength: 6,
-    },
     name: {
         type: String,
         required: [true, "Please provide your name"],
@@ -24,6 +11,12 @@ const donorSchema = mongoose.Schema({
         maxLength: [100, "Name is too large"],
 
     },
+    password: {
+        type: String,
+        required: [true, "Password is required"],
+        minLength: 6,
+    },
+
     role: {
         type: String,
         enum: ["donor", "admin"],
@@ -41,14 +34,13 @@ const donorSchema = mongoose.Schema({
     },
     lastDonateDate: {
         type: Date,
-        default: new Date("2022-11-21"),
+        default: new Date("2022-8-1"),
     },
 
     totalDonate: {
         type: Number,
         default: 0,
     },
-
 
     contactNumber: {
         type: String,
