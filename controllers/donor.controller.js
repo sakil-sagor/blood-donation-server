@@ -73,8 +73,8 @@ exports.login = async (req, res) => {
         // jwt token 
         const token = generateToken(donor)
         const other = {
-            details: "ASDF9074LJD0943MAMALDM35R65GI840943MAOE354FAS98Q7G0943J09745ADLAG0943MAPOG-0485",
-            security: "AKOPSDFO1290943MALDM35R65GI840943MAOE354FAS98Q7G0943MA0XC735M643L34KGM7345MNH7",
+            details: "SDF9074LJD0943MAMALDM35R65GI840943MAOE354FAS98Q7G0943J09745ADLAG0943MAPOG-0485",
+            security: "KOPSDFO1290943MALDM35R65GI840943MAOE354FAS98Q7G0943MA0XC735M643L34KGM7345MNH7",
             contactNumber: donor.contactNumber
         }
         res.status(200).json({
